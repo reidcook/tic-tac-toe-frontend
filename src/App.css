@@ -1,0 +1,29 @@
+:root{
+    height: 100%;
+    background-color: #272730;
+}
+
+body {
+    background-color: #272730!important;
+}
+
+.game {
+    .row {
+        display: flex;
+        justify-content: center;
+    }
+    .square {
+        height: 200px;
+        width: 200px;
+        background-color: white;
+        border-color: black;
+        border-style: solid;
+        align-content: center;
+        text-align: center;
+        font-size: 90px;
+    }
+    .square:hover{
+        background-color: bisque;
+        cursor: pointer;
+    }
+}
