@@ -8,7 +8,7 @@ const TicTacToe = (props) => {
 
     useEffect(() => {
         setGameState(props.game.gameState)
-        if(props.game.player2){
+        if(props.game.player2 && props.game.player1){
             setConnectionState(1)
         }
         else{

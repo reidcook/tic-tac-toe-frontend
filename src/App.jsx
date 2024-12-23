@@ -1,9 +1,10 @@
 import { Col, Container, Row } from 'react-bootstrap'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import WaitingRoom from './components/WaitingRoom'
 import TicTacToe from './components/TicTacToe'
+import Login from './Login'
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 function App() {
@@ -12,12 +13,32 @@ function App() {
   const [theUsername, setUsername] = useState();
   const [symbol, setSymbol] = useState();
   const [message, setMessage] = useState();
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const WINSTATES = {0: "", 1: "You Won", 2: "Opponent Won"};
   const [winState, setWinState] = useState(WINSTATES[0]);
 
+  useEffect(() => {
+    fetch("https://localhost:7162/User/getUser",
+      {
+        credentials: 'include'
+      }
+    )
+    .then((response) => response.json())
+    .then((data) => {
+      if(data){
+        console.log(data)
+        setUsername(data.userName)
+        setLoggedIn(true)
+      }
+      else{
+        setUsername("Logged Out")
+      }
+    })
+  }, [])
+
+
   const joinGame = async (username, gameId) => {
-    setUsername(username);
     try {
       // init connection
       const conn = new HubConnectionBuilder().withUrl("https://localhost:7162/GameConnect/").configureLogging(LogLevel.Information).build();
@@ -61,12 +82,30 @@ function App() {
     }
   }
 
+  if(!loggedIn){
+    return( 
+      <div>
+        <span style={{color: 'white'}}>{theUsername}</span>
+      <main>
+        <Container style={{width:"30%", textAlign: "center", marginTop: "15%"}}>
+          <Row>
+            <Col sm={12}>
+              <h1 style={{color: 'white'}}>Login</h1>
+            </Col>
+          </Row>
+          <Login setUsername={setUsername} setLoggedIn={setLoggedIn}/>
+        </Container>
+      </main>
+    </div>)
+  }
+
   if(game){
     return(<TicTacToe game={game} winState={winState} conn={conn} username={theUsername} symbol={symbol}/>)
   }
   else{
     return (
       <div>
+        <span style={{color: 'white'}}>Username: {theUsername}</span>
         <main>
           <Container style={{width:"30%", textAlign: "center", marginTop: "15%"}}>
             <Row>
@@ -74,7 +113,7 @@ function App() {
                 <h1 style={{color: 'white'}}>Welcome to..... TIC-TAC-TOE</h1>
               </Col>
             </Row>
-            <WaitingRoom joinGame={joinGame}></WaitingRoom>
+            <WaitingRoom username={theUsername} joinGame={joinGame}></WaitingRoom>
             {message}
           </Container>
         </main>
