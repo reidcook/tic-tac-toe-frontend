@@ -20,7 +20,6 @@ const Login = (props) => {
                       'Content-type': 'application/json;',
                     },
                   })
-                  .then((response) => console.log(response))
                 await fetch("https://localhost:7162/User/"+username+'@email.com?' + new URLSearchParams({username: username}), {
                     method: 'PUT',
                     headers: {
@@ -31,7 +30,6 @@ const Login = (props) => {
                         if(response.ok){
                             setMessage("Register Successful")
                         }
-                        console.log(response)
                 })
             }
             catch(error) {

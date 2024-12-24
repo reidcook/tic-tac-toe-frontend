@@ -5,9 +5,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import WaitingRoom from './components/WaitingRoom'
 import TicTacToe from './components/TicTacToe'
 import Login from './Login'
+import Leaderboard from './Leaderboard'
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 function App() {
+  const emptyGame = {'id': -1, 'gameState': ["", "", "", "", "", "", "", "", ""], player1: '', player2: '', turn: 'X'};
   const [conn, setConnection] = useState();
   const [game, setGame] = useState();
   const [theUsername, setUsername] = useState();
@@ -27,7 +29,6 @@ function App() {
     .then((response) => response.json())
     .then((data) => {
       if(data){
-        console.log(data)
         setUsername(data.userName)
         setLoggedIn(true)
       }
@@ -65,6 +66,7 @@ function App() {
         if(winner){
           if(winner === username){
             setWinState(WINSTATES[1]);
+            addWin();
           }
           else{
             setWinState(WINSTATES[2]);
@@ -99,12 +101,23 @@ function App() {
     })
   }
 
+  const addWin = async () => {
+    await fetch("https://localhost:7162/User/addWin", {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json;',
+        'accept': 'application/json'
+      },
+    })
+  }
+
   if(!loggedIn){
     return( 
       <div>
         <span style={{color: 'white'}}>{theUsername}</span>
       <main>
-        <Container style={{width:"30%", textAlign: "center", marginTop: "15%"}}>
+        <Container style={{width:"30%", textAlign: "center", marginTop: "10%"}}>
           <Row>
             <Col sm={12}>
               <h1 style={{color: 'white'}}>Login</h1>
@@ -117,6 +130,9 @@ function App() {
   }
 
   if(game){
+    if(game.id === -1){
+      return(<TicTacToe game={game} winState={winState} username={theUsername} symbol="X"/>)
+    }
     return(<TicTacToe game={game} winState={winState} conn={conn} username={theUsername} symbol={symbol}/>)
   }
   else{
@@ -124,7 +140,7 @@ function App() {
       <div>
         <Button variant='danger' onClick={onLogout}>Logout</Button><span style={{color: 'white', paddingLeft: '10px'}}>Username: {theUsername}</span>
         <main>
-          <Container style={{width:"30%", textAlign: "center", marginTop: "15%"}}>
+          <Container style={{width:"30%", textAlign: "center", marginTop: "10%"}}>
             <Row>
               <Col sm={12}>
                 <h1 style={{color: 'white'}}>Welcome to TIC-TAC-TOE</h1>
@@ -132,6 +148,8 @@ function App() {
             </Row>
             <WaitingRoom username={theUsername} joinGame={joinGame}></WaitingRoom>
             {message}
+            <Button variant='light' onClick={() => {let aiGame = emptyGame; aiGame.turn = theUsername; setGame(aiGame)}} style={{marginTop: "10px"}}>Singleplayer</Button>
+            <Leaderboard />
           </Container>
         </main>
       </div>
