@@ -71,7 +71,7 @@ const Login = (props) => {
                 <hr />
                 <Form.Group>
                     <Form.Control placeholder='Username' onChange={e => setUsername(e.target.value)}></Form.Control>
-                    <Form.Control placeholder='Password' onChange={e => setPassword(e.target.value)}></Form.Control>
+                    <Form.Control type="password" placeholder='Password' onChange={e => setPassword(e.target.value)}></Form.Control>
                     <div className="form-check form-switch" style={{textAlign: "left"}}>
                         <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={(e) => {setRegister(e.target.checked);}}/>
                         <label className="form-check-label" htmlFor="flexSwitchCheckDefault"><span style={{color: "white"}}>Register</span></label>

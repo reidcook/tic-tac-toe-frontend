@@ -1,4 +1,4 @@
-import { Col, Container, Row } from 'react-bootstrap'
+import { Col, Container, Row, Button } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -82,6 +82,23 @@ function App() {
     }
   }
 
+  const onLogout = async() => {
+    await fetch("https://localhost:7162/User/logout", {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-type': 'application/json;',
+        'accept': 'application/json'
+      },
+    })
+    .then((response) => {
+      if(response.ok){
+        setLoggedIn(false);
+        setUsername("");
+      }
+    })
+  }
+
   if(!loggedIn){
     return( 
       <div>
@@ -105,12 +122,12 @@ function App() {
   else{
     return (
       <div>
-        <span style={{color: 'white'}}>Username: {theUsername}</span>
+        <Button variant='danger' onClick={onLogout}>Logout</Button><span style={{color: 'white', paddingLeft: '10px'}}>Username: {theUsername}</span>
         <main>
           <Container style={{width:"30%", textAlign: "center", marginTop: "15%"}}>
             <Row>
               <Col sm={12}>
-                <h1 style={{color: 'white'}}>Welcome to..... TIC-TAC-TOE</h1>
+                <h1 style={{color: 'white'}}>Welcome to TIC-TAC-TOE</h1>
               </Col>
             </Row>
             <WaitingRoom username={theUsername} joinGame={joinGame}></WaitingRoom>
